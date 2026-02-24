@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LVM • Three.js + LaTeX</title>
+
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 18px; }
+    #box { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    #scene { width: 100%; height: 420px; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 12px; }
+  </style>
+
+  <!-- MathJax (LaTeX em HTML) -->
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] } };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <h2>LVM: Three.js + LaTeX (teste)</h2>
+
+  <div id="box">
+    <div class="card">
+      <div>Exemplo de fórmula:</div>
+      <div style="margin-top:8px">
+        \\[
+          \\\\varphi(t) =
+          \\\\frac{1}{1+g}\\Big((1+g-d)(\\\\cos t,\\\\sin t)+ d(\\\\cos(gt),\\\\sin(gt))\\\\Big)
+        \\]
+      </div>
+    </div>
+
+    <div id="scene" aria-label="Cena 3D"></div>
+
+    <div class="card">
+      Dica: depois trocamos o cubo por uma curva paramétrica e colocamos sliders para \(g\) e \(d\).
+    </div>
+  </div>
+
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+
+    const container = document.getElementById("scene");
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(60, container.clientWidth/container.clientHeight, 0.1, 1000);
+    camera.position.set(0, 0, 3);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    const cube = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshNormalMaterial());
+    scene.add(cube);
+
+    function animate(){
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.013;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener("resize", () => {
+      const w = container.clientWidth, h = container.clientHeight;
+      camera.aspect = w/h; camera.updateProjectionMatrix();
+      renderer.setSize(w,h);
+    });
+  </script>
+</body>
+</html>
